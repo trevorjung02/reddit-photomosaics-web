@@ -1,17 +1,5 @@
 const express = require('express');
 const path = require('path');
-<<<<<<< HEAD
-const app = express();
-
-app.use(express.static(path.join(__dirname, 'public', 'images')));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname)));
-
-app.use('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, 'public', 'home.html'));
-});
-
-=======
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
@@ -38,5 +26,4 @@ app.use('/', function (req, res, next) {
 });
 
 
->>>>>>> parent of 000e7f6... Deleted node_modules
 module.exports = app;
