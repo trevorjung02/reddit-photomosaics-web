@@ -18,6 +18,15 @@
   },
   "homepage": "https://github.com/trevorjung02/top-photo-mosaic#readme",
   "dependencies": {
+<<<<<<< HEAD
     "express": "^4.17.1"
+=======
+    "axios": "^0.20.0",
+    "cheerio": "^1.0.0-rc.3",
+    "cloudinary": "^1.23.0",
+    "express": "^4.17.1",
+    "puppeteer": "^5.2.1",
+    "sharp": "^0.26.0"
+>>>>>>> parent of 000e7f6... Deleted node_modules
   }
 }
