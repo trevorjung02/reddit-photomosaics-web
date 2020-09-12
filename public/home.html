@@ -5,13 +5,43 @@
     <title>Image test page</title>
     <style>
         img {
-            max-width: 100%;
+            max-width: 70%;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: Verdana, arial, helvetica, sans-serif;
+            display: block;
+        }
+
+        #primary {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border-style: solid;
+            border-width: thick;
+            border-color: white;
+        }
+
+        #header {
+            top: 0;
+            width: 100vw;
+            background-color: white;
+        }
+
+        body {
+            background-color: lightblue;
         }
     </style>
+    <script src='../bin/loadPhotomosaic.js'></script>
 </head>
 
 <body>
-    <img src='public/photomosaics/1.jpeg'>
+    <div id="header">
+        <h1>Daily Photomosaic</h1>
+    </div>
+
+    <img id="primary">
 </body>
 
 </html>
