@@ -1,3 +1,4 @@
+require('dotenv').config()
 var cloudinary = require('cloudinary').v2;
 const path = require('path');
 const fs = require('fs');
@@ -5,9 +6,9 @@ const express = require('express');
 const router = express.Router();
 
 cloudinary.config({
-    cloud_name: 'emrys',
-    api_key: '948549434388226',
-    api_secret: 'pOcq_60nmTk4D2I5NRm0WpiAXow'
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
 });
 
 router.get('/', (req, res, next) => {
@@ -29,7 +30,7 @@ router.get('/', (req, res, next) => {
                 console.log(JSON.stringify(result));
                 fs.writeFileSync(path.join(__dirname, 'photomosaic.json'), JSON.stringify(result));
                 res.status(200).json({
-                    src: result.resources[0].url
+                    src: result.resources[0].secure_url
                 })
             }
         });

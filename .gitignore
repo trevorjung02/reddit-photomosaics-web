@@ -1,3 +1,5 @@
-node_modules
-developer
-.vscode
+node_modules/
+developer/
+.vscode/
+.env
+*.jpg

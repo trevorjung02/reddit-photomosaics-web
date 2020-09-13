@@ -1,3 +1,4 @@
+require('dotenv').config()
 const path = require('path');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
@@ -6,9 +7,9 @@ const createPhotomosaic = require('./createPhotomosaic');
 const deleteImages = require('./deleteImages');
 
 cloudinary.config({
-    cloud_name: 'emrys',
-    api_key: '948549434388226',
-    api_secret: 'pOcq_60nmTk4D2I5NRm0WpiAXow'
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
 });
 const siteUrls = [
     'https://www.reddit.com/r/wallpaper/',
