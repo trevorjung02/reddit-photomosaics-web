@@ -13,7 +13,8 @@ async function scrape(url) {
             defaultViewport: null,
             args: [
                 '--window-size=800,600',
-                '--no-sandbox'
+                '--no-sandbox',
+                '--disable-setuid-sandbox'
             ]
         });
     console.log("browser created");
