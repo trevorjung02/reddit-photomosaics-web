@@ -11,7 +11,10 @@ async function scrape(url) {
         .launch({
             headless: false,
             defaultViewport: null,
-            args: ['--window-size=800,600']
+            args: [
+                '--window-size=800,600',
+                '--no-sandbox'
+            ]
         });
     console.log("browser created");
     let html;
@@ -40,7 +43,7 @@ async function scrape(url) {
     // console.log(images);
     // console.log(images);
     let dirSize = fs.readdirSync(imageDir).length;
-    downloadImages(images, dirSize+1, 75, 75);
+    downloadImages(images, dirSize + 1, 75, 75);
 }
 
 async function scrollToBottom(page) {
