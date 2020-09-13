@@ -25,6 +25,7 @@ async function updatePhotomosaic() {
     deleteImages(inputDir);
     deleteImages(tempDir);
     deleteImages(targetDir);
+    deleteImages(outputDir);
     for (let i = 0; i < siteUrls.length; i++) {
         await redditScraper(siteUrls[i]);
         await sleep(10 * 1000);
