@@ -12,10 +12,14 @@ async function scrape(url) {
             headless: false,
             defaultViewport: null,
             args: [
-                '--window-size=800,600',
+                '--disable-setuid-sandbox',
                 '--no-sandbox',
-                '--disable-setuid-sandbox'
+                '--window-size=800,600',
             ]
+        })
+        .catch(function(err) {
+            console.log(err);
+            process.exit(1);
         });
     console.log("browser created");
     let html;
