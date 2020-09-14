@@ -17,6 +17,9 @@
     "url": "https://github.com/trevorjung02/top-photo-mosaic/issues"
   },
   "homepage": "https://github.com/trevorjung02/top-photo-mosaic#readme",
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",

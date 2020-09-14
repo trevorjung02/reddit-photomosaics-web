@@ -53,4 +53,4 @@ function sleep(ms) {
     });
 }
 
-updatePhotomosaic();
+module.exports = updatePhotomosaic;
