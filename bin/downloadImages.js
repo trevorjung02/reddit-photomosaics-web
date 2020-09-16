@@ -25,7 +25,7 @@ function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight) {
             file.on('finish', function () {
                 sharp(file.path)
                     .resize({
-                        width: targetImage ? 7000 : pixelWidth,
+                        width: targetImage ? 5000 : pixelWidth,
                         height: targetImage ? undefined : pixelHeight
                     })
                     .toFile(

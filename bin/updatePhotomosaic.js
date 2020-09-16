@@ -5,6 +5,7 @@ const cloudinary = require('cloudinary').v2;
 const redditScraper = require('./redditScraper');
 const createPhotomosaic = require('./createPhotomosaic');
 const deleteImages = require('./deleteImages');
+const downloadImages = require('./downloadImages');
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -13,7 +14,7 @@ cloudinary.config({
 });
 const siteUrls = [
     'https://old.reddit.com/r/EarthPorn',
-    'https://old.reddit.com/r/wallpapers',
+    // 'https://old.reddit.com/r/wallpapers',
 ];
 const inputDir = path.join(__dirname, '../', 'public', 'images');
 const tempDir = path.join(__dirname, '../', 'public', 'tempimages');
@@ -27,15 +28,23 @@ async function updatePhotomosaic() {
     deleteImages(targetDir);
     deleteImages(outputDir);
     for (let i = 0; i < siteUrls.length; i++) {
-        let nextUrl = await redditScraper(siteUrls[i]);
+        let [nextUrl, images] = await redditScraper(siteUrls[i]);
         await sleep(5 * 1000);
         for (let j = 0; j < 5; j++) {
-            nextUrl = await redditScraper(nextUrl);
-            console.log(nextUrl);
+            let res = await redditScraper(nextUrl);
+            nextUrl = res[0];
+            images = images.concat(res[1]);
+            console.log(j + " " + nextUrl);
+            console.log("images length " + images.length);
             await sleep(5 * 1000);
         }
+        console.log(images);
+        let dirSize = fs.readdirSync(inputDir).length;
+        downloadImages(images, dirSize + 1, 75, 75);
+        await sleep(7 * 1000);
     }
     const dir = fs.readdirSync(targetDir);
+    console.log(path.join(targetDir, dir[0]));
     const inputJpg = path.join(targetDir, dir[0]);
     // console.log(inputJpg);
     await createPhotomosaic(inputJpg, 75, 75);

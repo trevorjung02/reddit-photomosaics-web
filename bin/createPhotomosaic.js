@@ -59,7 +59,7 @@ async function match(inputJpg, pixelWidth, pixelHeight, calculatePixelRGBs) {
 }
 
 async function compositePhotomosaic(inputBuffer, compositeImages) {
-    let batchSize = 120;
+    let batchSize = 50;
     let buffer = inputBuffer;
     for (let i = 0; i < compositeImages.length / batchSize; i++) {
         // console.log("Enter for");

@@ -55,9 +55,9 @@ async function scrape(url) {
     // console.log("browser closed");
     console.log(images.length);
     // console.log(images);
-    let dirSize = fs.readdirSync(imageDir).length;
-    downloadImages(images, dirSize + 1, 75, 75);
-    return $('span.next-button > a', html).attr('href');
+    // let dirSize = fs.readdirSync(imageDir).length;
+    // downloadImages(images, dirSize + 1, 75, 75);
+    return [$('span.next-button > a', html).attr('href'), images];
 }
 
 async function scrollToBottom(page) {
