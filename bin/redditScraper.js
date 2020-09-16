@@ -7,17 +7,19 @@ const downloadImages = require('./downloadImages');
 const imageDir = path.join(__dirname, '../', 'public', 'images');
 
 async function scrape(url) {
+    console.log(url);
     const browser = await puppeteer
         .launch({
-            headless: false,
+            headless: true,
             defaultViewport: null,
             args: [
                 '--disable-setuid-sandbox',
                 '--no-sandbox',
-                '--window-size=800,600',
+                // '--window-size=800,600',
+                '--disable-dev-shm-usage'
             ]
         })
-        .catch(function(err) {
+        .catch(function (err) {
             console.log(err);
             process.exit(1);
         });
@@ -27,10 +29,10 @@ async function scrape(url) {
         const page = await browser.newPage();
         await page.goto(url);
 
-        await scrollToBottom(page);
+        // await scrollToBottom(page);
         html = await page.content();
-        // console.log(html);
         console.log("Got html");
+        // console.log(html);
         await browser.close();
     }
     catch (err) {
@@ -38,25 +40,33 @@ async function scrape(url) {
         await browser.close();
     }
     const images = [];
-    const parsed = $('a > div > div > img', html);
+    const parsed = $('div > div > a > img', html);
     for (let i = 0; i < Math.min(parsed.length, 150); i++) {
-        images.push(parsed[i].attribs.src);
+        let url = parsed[i].attribs.src;
+        if(!url.endsWith('.jpg')) {
+            continue;
+        }
+        if(!url.startsWith('https:')) {
+            url = "https:" + url;
+        }
+        images.push(url);
     }
     // await browser.close();
     // console.log("browser closed");
     console.log(images.length);
     // console.log(images);
-    // console.log(images);
     let dirSize = fs.readdirSync(imageDir).length;
     downloadImages(images, dirSize + 1, 75, 75);
+    return $('span.next-button > a', html).attr('href');
 }
 
 async function scrollToBottom(page) {
     const distance = 400; // should be less than or equal to window.innerHeight
-    const delay = 100;
+    const delay = 300;
     while (await page.evaluate(() => document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight)) {
         await page.evaluate((y) => { document.scrollingElement.scrollBy(0, y); }, distance);
         await page.waitFor(delay);
+        // console.log((await page.content()).length);
     }
 }
 

@@ -12,8 +12,8 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 });
 const siteUrls = [
-    'https://www.reddit.com/r/wallpaper/',
-    'https://www.reddit.com/r/EarthPorn/',
+    'https://old.reddit.com/r/EarthPorn',
+    'https://old.reddit.com/r/wallpapers',
 ];
 const inputDir = path.join(__dirname, '../', 'public', 'images');
 const tempDir = path.join(__dirname, '../', 'public', 'tempimages');
@@ -27,8 +27,13 @@ async function updatePhotomosaic() {
     deleteImages(targetDir);
     deleteImages(outputDir);
     for (let i = 0; i < siteUrls.length; i++) {
-        await redditScraper(siteUrls[i]);
-        await sleep(10 * 1000);
+        let nextUrl = await redditScraper(siteUrls[i]);
+        await sleep(5 * 1000);
+        for (let j = 0; j < 5; j++) {
+            nextUrl = await redditScraper(nextUrl);
+            console.log(nextUrl);
+            await sleep(5 * 1000);
+        }
     }
     const dir = fs.readdirSync(targetDir);
     const inputJpg = path.join(targetDir, dir[0]);

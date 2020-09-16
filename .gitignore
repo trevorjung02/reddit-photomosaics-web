@@ -3,3 +3,5 @@ developer/
 .vscode/
 .env
 *.jpg
+Dockerfile
+.dockerignore
