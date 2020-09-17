@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const kill = require('tree-kill');
 const $ = require('cheerio');
 const fs = require('fs');
 const path = require('path');
@@ -33,11 +34,11 @@ async function scrape(url) {
         html = await page.content();
         console.log("Got html");
         // console.log(html);
-        await browser.close();
+        kill(browser.process().pid, 'SIGKILL');
     }
     catch (err) {
         console.log(err);
-        await browser.close();
+        kill(browser.process().pid, 'SIGKILL');
     }
     const images = [];
     const parsed = $('div > div > a > img', html);
