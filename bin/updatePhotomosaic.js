@@ -29,19 +29,19 @@ async function updatePhotomosaic() {
     deleteImages(outputDir);
     for (let i = 0; i < siteUrls.length; i++) {
         let [nextUrl, images] = await redditScraper(siteUrls[i]);
-        await sleep(5 * 1000);
+        await sleep(6 * 1000);
         for (let j = 0; j < 5; j++) {
             let res = await redditScraper(nextUrl);
             nextUrl = res[0];
             images = images.concat(res[1]);
             console.log(j + " " + nextUrl);
             console.log("images length " + images.length);
-            await sleep(5 * 1000);
+            await sleep(6 * 1000);
         }
         console.log(images);
         let dirSize = fs.readdirSync(inputDir).length;
         downloadImages(images, dirSize + 1, 75, 75);
-        await sleep(7 * 1000);
+        await sleep(12 * 1000);
     }
     const dir = fs.readdirSync(targetDir);
     console.log(path.join(targetDir, dir[0]));
