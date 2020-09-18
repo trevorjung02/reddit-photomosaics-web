@@ -23,32 +23,30 @@ const outputDir = path.join(__dirname, '../', 'public', 'photomosaics');
 
 
 async function updatePhotomosaic() {
+    let functionStart = Date.now();
     deleteImages(inputDir);
     deleteImages(tempDir);
     deleteImages(targetDir);
     deleteImages(outputDir);
-    for (let i = 0; i < siteUrls.length; i++) {
-        let [nextUrl, images] = await redditScraper(siteUrls[i]);
-        await sleep(6 * 1000);
-        for (let j = 0; j < 5; j++) {
-            let res = await redditScraper(nextUrl);
-            nextUrl = res[0];
-            images = images.concat(res[1]);
-            console.log(j + " " + nextUrl);
-            console.log("images length " + images.length);
-            await sleep(6 * 1000);
-        }
-        console.log(images);
-        let dirSize = fs.readdirSync(inputDir).length;
-        downloadImages(images, dirSize + 1, 75, 75);
-        await sleep(12 * 1000);
-    }
+    let start = Date.now();
+
+    let images = await redditScraper(siteUrls);
+    let dirSize = fs.readdirSync(inputDir).length;
+    await downloadImages(images, dirSize + 1, 75, 75, true);
+
+    let end = Date.now();
+    console.log((end - start) / 1000);
+
     const dir = fs.readdirSync(targetDir);
     console.log(path.join(targetDir, dir[0]));
     const inputJpg = path.join(targetDir, dir[0]);
     // console.log(inputJpg);
+    start = Date.now();
     await createPhotomosaic(inputJpg, 75, 75);
+    end = Date.now();
+    console.log((end - start) / 1000);
     console.log("Uploading to cloudinary");
+    let functionEnd = Date.now();
     const dirLength = fs.readdirSync(outputDir).length;
     cloudinary.uploader.upload(path.join(outputDir, dirLength + ".jpg"),
         {
@@ -59,6 +57,7 @@ async function updatePhotomosaic() {
         function (error, result) {
             console.log(result, error);
         });
+    console.log((functionEnd - functionStart) / 1000);
 }
 
 function sleep(ms) {

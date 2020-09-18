@@ -9,58 +9,51 @@ const pixelDirectory = path.join(__dirname, '../', 'public', 'images');
 const targetDirectory = path.join(__dirname, '../', 'public', 'targetimages');
 const tempDirectory = path.join(__dirname, '../', 'public', 'tempimages');
 
-function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight) {
+async function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight, downloadTarget) {
     function downloadImage(url, count, targetImage) {
-        // if(targetImage) {
-        //     console.log(`Started target ${targetDirectoryLength+1}.jpg`);
-        //     console.log(url);
-        // }
-        // else {
-        //     console.log(`Started ${count}.jpg`);
-        //     console.log(url);
-        // }
-        const file = fs.createWriteStream(path.join(tempDirectory, (targetImage ? -count : count) + ".jpg"));
-        https.get(url, function (response) {
-            response.pipe(file);
-            file.on('finish', function () {
-                sharp(file.path)
-                    .resize({
-                        width: targetImage ? 5000 : pixelWidth,
-                        height: targetImage ? undefined : pixelHeight
-                    })
-                    .toFile(
-                        targetImage ?
-                            path.join(targetDirectory, targetDirectoryLength+1 + ".jpg") :
-                            path.join(pixelDirectory, count + ".jpg"))
-                    .then(async function () {
-                        // if(targetImage) {
-                        //     console.log(`Finished target ${targetDirectoryLength+1}.jpg`);
-                        // }
-                        // else {
-                        //     console.log(`Finished ${count}.jpg`);
-                        // }    
-                        imagesFinished++;
-                        if (imagesFinished == imageUrls.length) {
-                            console.log("Images downloaded");
-                            await sleep(1000*3);
-                            console.log("Finised sleeping: now emitting");
-                            finishedEmitter.emit('finished');
-                        }
-                    })
-                    .then(function () {
-                        file.close();
-                    });
+        return new Promise(function (resolve, reject) {
+            const file = fs.createWriteStream(
+                path.join(tempDirectory, (targetImage ? -count : count) + ".jpg")
+            );
+            https.get(url, function (response) {
+                response.pipe(file);
+                file.on('finish', function () {
+                    sharp(file.path)
+                        .resize({
+                            width: targetImage ? 2500 : pixelWidth,
+                            height: targetImage ? undefined : pixelHeight
+                        })
+                        .jpeg({ quality: 10 })
+                        .toFile(
+                            targetImage ?
+                                path.join(targetDirectory, targetDirectoryLength + 1 + ".jpg") :
+                                path.join(pixelDirectory, count + ".jpg"))
+                        .then(function (info) {
+                            imagesFinished++;
+                            if (imagesFinished == imageUrls.length) {
+                                console.log("Images downloaded");
+                                deleteImages(tempDirectory)
+                            }
+                            resolve();
+                        })
+                        .then(function () {
+                            file.close();
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                });
             });
         });
     }
     const targetDirectoryLength = fs.readdirSync(targetDirectory).length;
     let imagesFinished = 0;
-    let finishedEmitter = new events.EventEmitter();
-    finishedEmitter.on('finished', () => deleteImages(tempDirectory));
+    let downloadPromises = [];
+    downloadPromises.push(downloadImage(imageUrls[0], numStart, downloadTarget ? true : false));
     for (let i = 1; i < imageUrls.length; i++) {
-        downloadImage(imageUrls[i], numStart + i - 1, false);
+        downloadPromises.push(downloadImage(imageUrls[i], numStart + i - 1, false));
     }
-    downloadImage(imageUrls[0], numStart, true);
+    await Promise.all(downloadPromises);
 }
 
 function sleep(ms) {

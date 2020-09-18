@@ -7,8 +7,7 @@ const downloadImages = require('./downloadImages');
 
 const imageDir = path.join(__dirname, '../', 'public', 'images');
 
-async function scrape(url) {
-    console.log(url);
+async function scrape(urls) {
     const browser = await puppeteer
         .launch({
             headless: true,
@@ -24,41 +23,50 @@ async function scrape(url) {
             console.log(err);
             process.exit(1);
         });
-    console.log("browser created");
-    let html;
-    try {
-        const page = await browser.newPage();
-        await page.goto(url);
+    const page = await browser.newPage();
+    async function scrapePage(url) {
+        console.log(url);
+        let html;
+        try {
+            await page.goto(url);
 
-        // await scrollToBottom(page);
-        html = await page.content();
-        console.log("Got html");
-        // console.log(html);
-        kill(browser.process().pid, 'SIGKILL');
-    }
-    catch (err) {
-        console.log(err);
-        kill(browser.process().pid, 'SIGKILL');
-    }
-    const images = [];
-    const parsed = $('div > div > a > img', html);
-    for (let i = 0; i < Math.min(parsed.length, 150); i++) {
-        let url = parsed[i].attribs.src;
-        if(!url.endsWith('.jpg')) {
-            continue;
+            // await scrollToBottom(page);
+            html = await page.content();
+            // console.log("Got html");
+            // console.log(html);
         }
-        if(!url.startsWith('https:')) {
-            url = "https:" + url;
+        catch (err) {
+            console.log(err);
+            kill(browser.process().pid, 'SIGKILL');
         }
-        images.push(url);
+        const images = [];
+        const parsed = $('div > div > a > img', html);
+        for (let i = 0; i < Math.min(parsed.length, 150); i++) {
+            let url = parsed[i].attribs.src;
+            if (!url.endsWith('.jpg')) {
+                continue;
+            }
+            if (!url.startsWith('https:')) {
+                url = "https:" + url;
+            }
+            images.push(url);
+        }
+        return [$('span.next-button > a', html).attr('href'), images];
     }
-    // await browser.close();
-    // console.log("browser closed");
+    let images;
+    for (let i = 0; i < urls.length; i++) {
+        let res = await scrapePage(urls[i]);
+        let nextUrl = res[0];
+        images = res[1];
+        for (let j = 0; j < 5; j++) {
+            res = await scrapePage(nextUrl);
+            nextUrl = res[0];
+            images = images.concat(res[1]);
+        }
+    }
     console.log(images.length);
-    // console.log(images);
-    // let dirSize = fs.readdirSync(imageDir).length;
-    // downloadImages(images, dirSize + 1, 75, 75);
-    return [$('span.next-button > a', html).attr('href'), images];
+    kill(browser.process().pid, 'SIGKILL');
+    return images;
 }
 
 async function scrollToBottom(page) {
