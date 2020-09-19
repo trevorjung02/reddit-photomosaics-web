@@ -65,7 +65,7 @@ async function match(inputJpg, pixelWidth, pixelHeight, calculatePixelRGBs) {
 }
 
 async function compositePhotomosaic(inputBuffer, compositeImages) {
-    let batchSize = 30;
+    let batchSize = 20;
     let buffer = inputBuffer;
     for (let i = 0; i < compositeImages.length / batchSize; i++) {
         buffer = await compositeHelper(buffer, compositeImages.slice(i * batchSize, Math.min((i + 1) * batchSize, compositeImages.length)));

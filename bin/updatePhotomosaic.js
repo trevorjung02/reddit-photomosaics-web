@@ -58,6 +58,7 @@ async function updatePhotomosaic() {
             console.log(result, error);
         });
     console.log((functionEnd - functionStart) / 1000);
+    // process.exit();
 }
 
 function sleep(ms) {

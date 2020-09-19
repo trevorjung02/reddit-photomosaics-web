@@ -5,6 +5,7 @@ const photomosaicRoute = require('./api/photomosaicRoute');
 const updatePhotomosaic = require('./bin/updatePhotomosaic');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
+const child_process = require('child_process');
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -26,8 +27,9 @@ app.use(express.static(path.join(__dirname, 'bin')));
 app.use(express.static(path.join(__dirname)));
 
 app.use('/search', function (req, res, next) {
-    res.status(200).sendFile(path.join(__dirname, 'public', 'home.html'));
+    // child_process.spawn('node', ['bin/updatePhotomosaicTask.js']);
     updatePhotomosaic();
+    res.status(200).sendFile(path.join(__dirname, 'public', 'home.html'));
 });
 
 app.use('/', function (req, res, next) {
