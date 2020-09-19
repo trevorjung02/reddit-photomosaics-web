@@ -27,8 +27,15 @@ app.use(express.static(path.join(__dirname, 'bin')));
 app.use(express.static(path.join(__dirname)));
 
 app.use('/search', function (req, res, next) {
-    // child_process.spawn('node', ['bin/updatePhotomosaicTask.js']);
-    updatePhotomosaic();
+    let worker = child_process.spawn(
+        'node',
+        ['bin/updatePhotomosaicTask.js'],
+        { stdio: 'inherit' }
+    );
+    // worker.stdout.on('data', function (data) {
+    //     console.log(data);
+    // });
+    // updatePhotomosaic();
     res.status(200).sendFile(path.join(__dirname, 'public', 'home.html'));
 });
 
