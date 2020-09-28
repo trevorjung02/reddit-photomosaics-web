@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-   
+<html lang="en">
+
 <head>
-   <meta charset="utf-8">
-   <title>Daily Photomosaic</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="style.css">
    <script src='../bin/loadPhotomosaic.js'></script>
+   <title>Uploaded Image</title>
    <script>
       let loadFile = function (event) {
          let image = document.getElementById('output');
@@ -15,22 +17,18 @@
 
 <body>
    <div id="header">
-      <h1>Daily Photomosaic</h1>
+      <h1>Uploaded Photomosaic</h1>
    </div>
 
    <img id="primary">
 
-   <form method="POST" action="uploadImage" enctype="multipart/form-data" accept="image/*" target="_blank"
-      onchange="loadFile(event)">
+   <form method="POST" enctype="multipart/form-data" accept="image/*" target="_blank" onchange="loadFile(event)">
       <label for="userImage">Upload an image</label>
       <input type="file" id="userImage" name="userImage">
-      <div>
-         <img id="output" width="100px">
-      </div>
-      <div>
-         <input type="submit">
-      </div>
+      <input type="submit">
    </form>
+
+   <img id="output">
 </body>
 
 </html>

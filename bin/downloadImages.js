@@ -9,7 +9,7 @@ const pixelDirectory = path.join(__dirname, '../', 'public', 'images');
 const targetDirectory = path.join(__dirname, '../', 'public', 'targetimages');
 const tempDirectory = path.join(__dirname, '../', 'public', 'tempimages');
 
-async function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight, downloadTarget) {
+async function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight, downloadTarget, targetDirectoryLength) {
     function downloadImage(url, count, targetImage) {
         return new Promise(function (resolve, reject) {
             const file = fs.createWriteStream(
@@ -46,7 +46,6 @@ async function downloadImages(imageUrls, numStart, pixelWidth, pixelHeight, down
             });
         });
     }
-    const targetDirectoryLength = fs.readdirSync(targetDirectory).length;
     let imagesFinished = 0;
     let downloadPromises = [];
     downloadPromises.push(downloadImage(imageUrls[0], numStart, downloadTarget ? true : false));

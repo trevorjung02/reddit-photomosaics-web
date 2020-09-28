@@ -1,3 +1,7 @@
 const updatePhotomosaic = require('./updatePhotomosaic');
 
-updatePhotomosaic();
+console.log(process.argv);
+updatePhotomosaic(process.argv[2], process.argv[3] === 'true')
+   .then(() => {
+      process.exit();
+   });
