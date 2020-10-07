@@ -47,7 +47,7 @@ io.on('connection', socket => {
       fs.writeFileSync(path.join(userDir, (targetDirSize + 1) + ".jpg"), img);
       worker = child_process.spawn(
          'node',
-         ['bin/updatePhotomosaicTask.js', path.join(userDir, (targetDirSize + 1) + ".jpg"), false],
+         ['bin/updatePhotomosaicTask.js', path.join(userDir, (targetDirSize + 1) + ".jpg"), false, true],
          { stdio: ['inherit', 'inherit', 'inherit', 'ipc'] }
       );
       worker.on('message', function (message) {
