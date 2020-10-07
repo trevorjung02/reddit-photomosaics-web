@@ -25,6 +25,7 @@ const outputDir = path.join(__dirname, '../', 'public', 'photomosaics');
 
 function updatePhotomosaic(imagePath, uploadToCloud) {
    return new Promise(async function (resolve, reject) {
+      // resolve(path.join('public', 'photomosaics', '1602031052930.jpg'));
       let functionStart = Date.now();
       deleteImages(inputDir);
       deleteImages(tempDir);
@@ -35,6 +36,7 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
       const targetDirSize = fs.readdirSync(targetDir).length;
       if (imagePath != 'null' && imagePath != 'undefined') {
          // console.log(`ImagePath: ${imagePath}`);
+         console.log("dir size:" + targetDirSize);
          promises.push(sharp(imagePath)
             .resize({
                width: 2500
@@ -47,7 +49,7 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
       }
       let images = await redditScraper(siteUrls);
       let dirSize = fs.readdirSync(inputDir).length;
-      console.log(`path: ${imagePath}`);
+      // console.log(`path: ${imagePath}`);
       if (imagePath != 'null' && imagePath != 'undefined') {
          promises.push(downloadImages(images, dirSize + 1, 75, 75, false));
          await Promise.all(promises);
@@ -63,14 +65,15 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
       console.log(inputJpg);
       start = Date.now();
       const destPath = Date.now() + ".jpg";
-      await createPhotomosaic(path.join(outputDir, destPath), inputJpg, 75, 75);
+      const outputImage = path.join(outputDir, destPath);
+      await createPhotomosaic(outputImage, inputJpg, 75, 75);
       end = Date.now();
       console.log((end - start) / 1000);
       let functionEnd = Date.now();
       if (uploadToCloud) {
          console.log("Uploading to cloudinary");
          const dirLength = fs.readdirSync(outputDir).length;
-         cloudinary.uploader.upload(path.join(outputDir, destPath),
+         cloudinary.uploader.upload(outputImage,
             {
                folder: "photomosaics/",
                public_id: destPath,
@@ -80,10 +83,9 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
                console.log(result, error);
             });
       }
-
       console.log((functionEnd - functionStart) / 1000);
       // process.exit();
-      resolve();
+      resolve(path.join('public', 'photomosaics', destPath));
    });
 }
 

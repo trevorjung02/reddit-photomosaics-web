@@ -8,23 +8,26 @@ const child_process = require('child_process');
 
 router.post('/', function (req, res) {
    // let image = req.body.userImage;
+   const io = req.app.get('socketio');
    const form = new formidable.IncomingForm();
    form.parse(req, async function (err, fields, files) {
       if (err != null) {
          console.log(err);
          return res.status(400).json({ message: err.message });
       }
-      const userImage = files.userImage;
-      const imagePath = userImage.path;
-      let worker = child_process.spawn(
-         'node',
-         ['bin/updatePhotomosaicTask.js', imagePath, false],
-         { stdio: 'inherit' }
-      );
-      // await updatePhotomosaic(imagePath, false);
-      worker.on('exit', () => {
-         res.sendFile(path.join(__dirname, '../', 'public', 'userImage.html'));
-      })
+      res.sendFile(path.join(__dirname, '../', 'public', 'userImage.html'));
+      io.emit('hello', 'helloworld');
+      // const userImage = files.userImage;
+      // const imagePath = userImage.path;
+      // let worker = child_process.spawn(
+      //    'node',
+      //    ['bin/updatePhotomosaicTask.js', imagePath, false],
+      //    { stdio: 'inherit' }
+      // );
+      // // await updatePhotomosaic(imagePath, false);
+      // worker.on('exit', () => {
+
+      // })
    })
 });
 

@@ -33,10 +33,10 @@ router.get('/uploadImage', (req, res, next) => {
 });
 
 router.get('/', (req, res, next) => {
-   console.log("/");
-   
-   let photomosaic = JSON.parse(fs.readFileSync(path.join(__dirname, 'photomosaic.json')));
+   console.log("Hit / route in photomosaicRoute");
 
+   let photomosaic = JSON.parse(fs.readFileSync(path.join(__dirname, 'photomosaic.json')));
+   console.log(`${(Date.now() - Date.parse(photomosaic.resources[0].created_at)) / (1000 * 60 * 60 * 24)} days since photomosaic last updated`);
    if (Object.keys(photomosaic).length != 0 && Date.now() - Date.parse(photomosaic.resources[0].created_at) < 1000 * 60 * 60 * 24) {
       res.status(200).json({
          src: photomosaic.resources[0].url
@@ -51,7 +51,7 @@ router.get('/', (req, res, next) => {
             });
          }
          else {
-            console.log(JSON.stringify(result));
+            // console.log(JSON.stringify(result));
             fs.writeFileSync(path.join(__dirname, 'photomosaic.json'), JSON.stringify(result));
             res.status(200).json({
                src: result.resources[0].secure_url

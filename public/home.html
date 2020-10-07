@@ -1,36 +1,85 @@
 <!DOCTYPE html>
-   
+
 <head>
    <meta charset="utf-8">
    <title>Daily Photomosaic</title>
-   <link rel="stylesheet" href="style.css">
+   <!-- Compiled and minified CSS -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+   <!-- Compiled and minified JavaScript -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
    <script src='../bin/loadPhotomosaic.js'></script>
-   <script>
-      let loadFile = function (event) {
-         let image = document.getElementById('output');
-         image.src = URL.createObjectURL(event.target.files[0]);
-      }
-   </script>
 </head>
 
 <body>
-   <div id="header">
-      <h1>Daily Photomosaic</h1>
+   <nav>
+      <div class="nav-wrapper">
+         <a class="brand-logo center">Daily Photomosaic</a>
+      </div>
+   </nav>
+
+   <div class="section">
+      <div class="container">
+         <img class="responsive-img" id="primary">
+      </div>
    </div>
 
-   <img id="primary">
+   <div class="section">
+      <div class="container">
+         <form method="POST" action="" enctype="multipart/form-data" accept="image/*" target="_blank"
+            onchange="loadFile(event)">
+            <div class="file-field input-field">
+               <div class="btn">
+                  <span>Upload</span>
+                  <input type="file" id="userImage" name="userImage">
+               </div>
+               <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text">
+               </div>
+               <div>
+                  <img id="output" width="100px">
+               </div>
+            </div>
 
-   <form method="POST" action="uploadImage" enctype="multipart/form-data" accept="image/*" target="_blank"
-      onchange="loadFile(event)">
-      <label for="userImage">Upload an image</label>
-      <input type="file" id="userImage" name="userImage">
-      <div>
-         <img id="output" width="100px">
+            <button class="btn waves-effect waves-light" type="submit" name="action">
+               Submit
+            </button>
+         </form>
       </div>
-      <div>
-         <input type="submit">
-      </div>
-   </form>
+   </div>
+
+   <script>
+      let loadFile = function (event) {
+         let image = document.getElementById('output');
+         console.log(event.target.files[0]);
+         image.src = URL.createObjectURL(event.target.files[0]);
+      }
+   </script>
+
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+      console.log("In javascript of home.html");
+      var socket = io();
+      let form = document.querySelector('form');
+      form.addEventListener('submit', function (e) {
+         e.preventDefault();
+         let popup = window.open('userImage.html');
+         console.log("Socket emitting in from html page");
+         socket.emit('create:user', e.target[0].files[0]);
+         let image = document.getElementById('output');
+         image.src = '';
+         form.reset();
+         socket.once('send:user', function (outputImage) {
+            console.log("Received completed photomosaic")
+            let img = popup.document.getElementById("primary");
+            img.src = outputImage;
+            let progressBar = popup.document.getElementById("progressSection");
+            progressBar.remove();
+            let title = popup.document.querySelector("a");
+            title.innerHTML = "Your New Photomosaic!";
+         });
+      });
+   </script>
 </body>
 
 </html>
