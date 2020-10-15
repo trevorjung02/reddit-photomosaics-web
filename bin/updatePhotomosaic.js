@@ -69,10 +69,8 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
       await createPhotomosaic(outputImage, inputJpg, 75, 75);
       end = Date.now();
       console.log((end - start) / 1000);
-      let functionEnd = Date.now();
       if (uploadToCloud) {
-         console.log("Uploading to cloudinary");
-         const dirLength = fs.readdirSync(outputDir).length;
+         console.log(`Uploading ${outputImage} to cloudinary`);
          cloudinary.uploader.upload(outputImage,
             {
                folder: "photomosaics/",
@@ -81,11 +79,12 @@ function updatePhotomosaic(imagePath, uploadToCloud) {
             },
             function (error, result) {
                console.log(result, error);
+               resolve(path.join('public', 'photomosaics', destPath));
             });
       }
-      console.log((functionEnd - functionStart) / 1000);
-      // process.exit();
-      resolve(path.join('public', 'photomosaics', destPath));
+      else {
+         resolve(path.join('public', 'photomosaics', destPath));
+      }
    });
 }
 
