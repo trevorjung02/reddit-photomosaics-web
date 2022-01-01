@@ -7,6 +7,7 @@ main();
 
 async function main() {
     if (process.argv.length < 5) {
+        usage();
         process.exit(1);
     }
     const re_img = /[ab]\.thumbs\.redditmedia\.com\S*\.jpg/g;
@@ -94,4 +95,8 @@ function downloadFile(fileUrl, outputLocationPath) {
     }).then(async response => {
         return pipeline(response.data, fs.createWriteStream(outputLocationPath));
     });
+}
+
+function usage() {
+    console.log(`Usage: ${process.argv[0]} url num_images outDir`);
 }

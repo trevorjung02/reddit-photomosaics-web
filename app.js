@@ -79,7 +79,12 @@ io.on('connection', socket => {
    });
 });
 
-execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir])
+// execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir])
+//    .catch((error) => {
+//       console.log(error);
+//    });;
+
+exec(`node redditphotos/Scraper/main https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
    .catch((error) => {
       console.log(error);
    });;
