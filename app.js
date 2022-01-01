@@ -32,15 +32,18 @@ let io = require('socket.io')(server);
 app.set('socketio', io);
 
 const inputDir = path.join(__dirname, "input");
-const redditphotosPath = path.join(__dirname, "redditphotos", "redditphotos.exe");
+const redditphotosDir = path.join(__dirname, "redditphotos");
+const redditphotosPath = path.join(redditphotosDir, "redditphotos.exe");
+const imagesDir = path.join(redditphotosDir, "images");
+const scraperPath = path.join(redditphotosDir, "Scraper", "scraper.exe");
 
 (async function () {
    await fs.mkdir(inputDir).catch(() => { });
+   await fs.mkdir(imagesDir).catch(() => { });
 })();
 
 io.on('connection', socket => {
    console.log("connected");
-   let worker;
    socket.on('create:user', async function (img) {
       const inputDirSize = (await fs.readdir(inputDir)).length;
       const imgName = (inputDirSize + 1) + ".jpg";
@@ -71,5 +74,7 @@ io.on('connection', socket => {
          })
    });
 });
+
+execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir]);
 
 server.listen(port, () => console.log(`Server created on port ${port}`));
