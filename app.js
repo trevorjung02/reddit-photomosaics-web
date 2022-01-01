@@ -6,6 +6,7 @@ const child_process = require('child_process');
 const fs = require('fs').promises;
 const util = require('util');
 const execFile = util.promisify(child_process.execFile);
+const exec = util.promisify(child_process.exec);
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -31,8 +32,8 @@ let io = require('socket.io')(server);
 
 app.set('socketio', io);
 
-const inputDir = path.join(__dirname, "input");
-const redditphotosDir = path.join(__dirname, "redditphotos");
+const inputDir = path.join("input");
+const redditphotosDir = path.join("redditphotos");
 const redditphotosPath = path.join(redditphotosDir, "redditphotos");
 const imagesDir = path.join(redditphotosDir, "images");
 const scraperPath = path.join(redditphotosDir, "Scraper", "scraper.exe");
@@ -50,7 +51,8 @@ io.on('connection', socket => {
       const imgPath = path.join(inputDir, imgName);
       fs.writeFile(imgPath, img)
          .then(() => {
-            execFile(redditphotosPath, [imgPath], { cwd: "redditphotos" })
+            // execFile("redditphotos", [imgPath], { cwd: path.resolve("redditphotos") })
+            exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
                .then(() => {
                   const outPath = path.join("redditphotos", "photomosaics", imgName);
                   socket.emit('send:user', outPath);
