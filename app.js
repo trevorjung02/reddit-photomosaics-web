@@ -51,11 +51,13 @@ io.on('connection', socket => {
       const imgPath = path.join(inputDir, imgName);
       fs.writeFile(imgPath, img)
          .then(() => {
-            // execFile("redditphotos", [imgPath], { cwd: path.resolve("redditphotos") })
             exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
                .then(() => {
                   const outPath = path.join("redditphotos", "photomosaics", imgName);
                   socket.emit('send:user', outPath);
+               })
+               .catch((error) => {
+                  console.log(error);
                });
          });
    });
@@ -77,6 +79,9 @@ io.on('connection', socket => {
    });
 });
 
-execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir]);
+execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir])
+   .catch((error) => {
+      console.log(error);
+   });;
 
 server.listen(port, () => console.log(`Server created on port ${port}`));
