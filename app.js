@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const child_process = require('child_process');
 const fs = require('fs').promises;
+const constants = require('fs').constants;
 const util = require('util');
 const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
@@ -63,19 +64,20 @@ io.on('connection', socket => {
    });
    socket.on('getPhotomosaic', () => {
       const JSONPath = path.join("json", "photomosaicURL.json");
-      fs.readFile(JSONPath)
-         .then(res => {
-            socket.emit('sendPhotomosaic', JSON.parse(res).url);
-         })
-         .catch((error) => {
-            cloudinary.search.expression("resource_type:image AND folder:photomosaics AND filename:0")
-               .execute()
-               .then(result => {
-                  const url = result.resources[0].secure_url;
-                  socket.emit('sendPhotomosaic', url);
-                  fs.writeFile(JSONPath, JSON.stringify({ url: url }));
-               })
-         })
+      fs.access(JSONPath, constants.F_OK)
+         .then(fs.readFile(JSONPath)
+            .then(res => {
+               socket.emit('sendPhotomosaic', JSON.parse(res).url);
+            })
+            .catch((error) => {
+               cloudinary.search.expression("resource_type:image AND folder:photomosaics AND filename:0")
+                  .execute()
+                  .then(result => {
+                     const url = result.resources[0].secure_url;
+                     socket.emit('sendPhotomosaic', url);
+                     fs.writeFile(JSONPath, JSON.stringify({ url: url }));
+                  })
+            }))
    });
 });
 
