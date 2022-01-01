@@ -5,3 +5,8 @@ developer/
 *.jpg
 Dockerfile
 .dockerignore
+images
+photomosaics
+tiles
+input
+json

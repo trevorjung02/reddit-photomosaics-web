@@ -9,14 +9,13 @@
 
    <!-- Compiled and minified JavaScript -->
    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-   <!-- <script src='../bin/loadPhotomosaic.js'></script> -->
    <title>Uploaded Image</title>
 </head>
 
 <body>
    <nav>
       <div class="nav-wrapper">
-         <a class="brand-logo center">Your Image Is Being Created</a>
+         <a class="brand-logo center">Your photomosaic is being created</a>
       </div>
    </nav>
 
@@ -32,9 +31,9 @@
             <div class="indeterminate"></div>
          </div>
          <div style="text-align: center;">
-            <a href="https://github.com/trevorjung02/reddit-photomosaics/releases" target="_blank"
+            <a href="https://github.com/trevorjung02/reddit-photos-CLI/releases" target="_blank"
                style="font-size: large; text-decoration: underline;">
-               Download the desktop application for faster photomosaic creation!
+               Download the command line application here
             </a>
          </div>
       </div>
@@ -64,37 +63,8 @@
       </div>
    </div>
 
-   <script>
-      let loadFile = function (event) {
-         let image = document.getElementById('output');
-         image.src = URL.createObjectURL(event.target.files[0]);
-      }
-   </script>
-
    <script src="/socket.io/socket.io.js"></script>
-   <script>
-      console.log("In javascript of userImage.html");
-      var socket = io();
-      let form = document.querySelector('form');
-      form.addEventListener('submit', function (e) {
-         e.preventDefault();
-         let popup = window.open('userImage.html');
-         console.log("Socket emitting in from html page");
-         socket.emit('create:user', e.target[0].files[0]);
-         form.reset();
-         let image = document.getElementById('output');
-         image.src = '';
-         socket.once('send:user', function (outputImage) {
-            console.log("Received completed photomosaic")
-            let img = popup.document.getElementById("primary");
-            img.src = outputImage;
-            let progressBar = popup.document.getElementById("progressSection");
-            progressBar.remove();
-            let title = popup.document.querySelector("a");
-            title.innerHTML = "Your New Photomosaic!";
-         });
-      });
-   </script>
+   <script src="script.js"></script>
 </body>
 
 </html>
