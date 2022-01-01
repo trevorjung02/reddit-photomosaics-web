@@ -53,7 +53,7 @@ io.on('connection', socket => {
       const imgPath = path.join(inputDir, imgName);
       fs.writeFile(imgPath, img)
          .then(() => {
-            fs.chmod("redditphotos/redditphotos", 777)
+            fs.chmod("redditphotos/redditphotos", 0o777)
                .then(() => {
                   exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
                      .then(() => {
