@@ -4,7 +4,6 @@ const express = require('express');
 const path = require('path');
 const child_process = require('child_process');
 const fs = require('fs').promises;
-const constants = require('fs').constants;
 const util = require('util');
 const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
@@ -38,10 +37,11 @@ const redditphotosDir = path.join("redditphotos");
 const redditphotosPath = path.join(redditphotosDir, "redditphotos");
 const imagesDir = path.join(redditphotosDir, "images");
 const scraperPath = path.join(redditphotosDir, "Scraper", "scraper.exe");
+const jsonDir = path.join("json");
 
 (async function () {
-   await fs.mkdir(inputDir).catch(() => { });
-   await fs.mkdir(imagesDir).catch(() => { });
+   await Promise.all([fs.mkdir(inputDir), fs.mkdir(imagesDir), fs.mkdir(jsonDir)])
+      .catch(() => { });
 })();
 
 io.on('connection', socket => {
@@ -63,32 +63,31 @@ io.on('connection', socket => {
          });
    });
    socket.on('getPhotomosaic', () => {
-      const JSONPath = path.join("json", "photomosaicURL.json");
-      fs.access(JSONPath, constants.F_OK)
-         .then(fs.readFile(JSONPath)
-            .then(res => {
-               socket.emit('sendPhotomosaic', JSON.parse(res).url);
-            })
-            .catch((error) => {
-               cloudinary.search.expression("resource_type:image AND folder:photomosaics AND filename:0")
-                  .execute()
-                  .then(result => {
-                     const url = result.resources[0].secure_url;
-                     socket.emit('sendPhotomosaic', url);
-                     fs.writeFile(JSONPath, JSON.stringify({ url: url }));
-                  })
-            }))
+      const JSONPath = path.join(jsonDir, "photomosaicURL.json");
+      fs.readFile(JSONPath)
+         .then(res => {
+            socket.emit('sendPhotomosaic', JSON.parse(res).url);
+         })
+         .catch((error) => {
+            cloudinary.search.expression("resource_type:image AND folder:photomosaics AND filename:0")
+               .execute()
+               .then(result => {
+                  const url = result.resources[0].secure_url;
+                  socket.emit('sendPhotomosaic', url);
+                  fs.writeFile(JSONPath, JSON.stringify({ url: url }));
+               })
+         })
    });
 });
 
 // execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir])
 //    .catch((error) => {
 //       console.log(error);
-//    });;
+//    });
 
 exec(`node redditphotos/Scraper/main https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
    .catch((error) => {
       console.log(error);
-   });;
+   });
 
 server.listen(port, () => console.log(`Server created on port ${port}`));
