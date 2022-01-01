@@ -62,7 +62,7 @@ io.on('connection', socket => {
          });
    });
    socket.on('getPhotomosaic', () => {
-      const JSONPath = path.join(__dirname, "json", "photomosaicURL.json");
+      const JSONPath = path.join("json", "photomosaicURL.json");
       fs.readFile(JSONPath)
          .then(res => {
             socket.emit('sendPhotomosaic', JSON.parse(res).url);
