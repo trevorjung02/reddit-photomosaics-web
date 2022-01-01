@@ -8,6 +8,7 @@ const util = require('util');
 const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
 const cloudinary = require('cloudinary').v2;
+const { chmod } = require('fs');
 
 cloudinary.config({
    cloud_name: process.env.CLOUD_NAME,
@@ -52,14 +53,20 @@ io.on('connection', socket => {
       const imgPath = path.join(inputDir, imgName);
       fs.writeFile(imgPath, img)
          .then(() => {
-            exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
+            fs.chmod("redditphotos/redditphotos", 777)
                .then(() => {
-                  const outPath = path.join("redditphotos", "photomosaics", imgName);
-                  socket.emit('send:user', outPath);
+                  exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
+                     .then(() => {
+                        const outPath = path.join("redditphotos", "photomosaics", imgName);
+                        socket.emit('send:user', outPath);
+                     })
+                     .catch((error) => {
+                        console.log(error);
+                     });
                })
                .catch((error) => {
                   console.log(error);
-               });
+               })
          });
    });
    socket.on('getPhotomosaic', () => {
@@ -79,11 +86,6 @@ io.on('connection', socket => {
          })
    });
 });
-
-// execFile(scraperPath, ["https://old.reddit.com/r/EarthPorn/", 100, imagesDir])
-//    .catch((error) => {
-//       console.log(error);
-//    });
 
 exec(`node redditphotos/Scraper/main https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
    .catch((error) => {
