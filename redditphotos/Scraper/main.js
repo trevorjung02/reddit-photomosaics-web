@@ -98,5 +98,5 @@ function downloadFile(fileUrl, outputLocationPath) {
 }
 
 function usage() {
-    console.log(`Usage: ${process.argv[0]} url num_images outDir`);
+    console.log(`Usage: ${process.argv[1]} url num_images outDir`);
 }

@@ -2,8 +2,9 @@ require('dotenv').config()
 const cloudinary = require('cloudinary').v2;
 const path = require('path');
 const child_process = require('child_process');
+const fs = require('fs').promises;
 const util = require('util');
-const execFile = util.promisify(child_process.execFile);
+const exec = util.promisify(child_process.exec);
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -12,21 +13,39 @@ cloudinary.config({
 });
 
 const redditphotosDir = path.join(__dirname, "..", "redditphotos");
-const redditphotosPath = path.join(redditphotosDir, "redditphotos.exe");
-const imgPath = path.join(redditphotosDir, "images", "0.jpg");
+const scraperPath = path.join(redditphotosDir, "Scraper", "main");
+const imagesDir = path.join(redditphotosDir, "images");
+const redditphotosPath = path.join(redditphotosDir, "redditphotos");
+const imgPath = path.join(imagesDir, "0.jpg");
 const outPath = path.join(redditphotosDir, "photomosaics", "0.jpg");
 
-execFile(redditphotosPath, ["--sub=EarthPorn", imgPath])
+(async function () {
+    await fs.mkdir(imagesDir).catch(() => { });
+})();
+
+exec(`node "${scraperPath}" https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
     .then(() => {
-        cloudinary.uploader.upload(outPath,
-            {
-                folder: "photomosaics/",
-                public_id: "0",
-                overwrite: true
-            },
-            function (error, result) {
-                if (error) {
-                    console.log(error);
-                }
+        fs.chmod(redditphotosPath, 0o777)
+            .then(() => {
+                exec(`cd redditphotos && ./redditphotos ${path.join(imgPath)}`)
+                    .then(() => {
+                        cloudinary.uploader.upload(outPath,
+                            {
+                                folder: "photomosaics/",
+                                public_id: "0",
+                                overwrite: true
+                            },
+                            function (error, result) {
+                                if (error) {
+                                    console.log(error);
+                                }
+                            });
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
             });
     })
+    .catch((error) => {
+        console.log(error);
+    });

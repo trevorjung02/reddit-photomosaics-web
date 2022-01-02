@@ -5,10 +5,8 @@ const path = require('path');
 const child_process = require('child_process');
 const fs = require('fs').promises;
 const util = require('util');
-const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
 const cloudinary = require('cloudinary').v2;
-const { chmod } = require('fs');
 
 cloudinary.config({
    cloud_name: process.env.CLOUD_NAME,
@@ -20,7 +18,6 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'redditphotos', 'photomosaics')));
-app.use(express.static(path.join(__dirname)));
 
 app.use('/', function (req, res, next) {
    res.status(200).sendFile(path.join(__dirname, 'public', 'home.html'));
@@ -33,12 +30,11 @@ let io = require('socket.io')(server);
 
 app.set('socketio', io);
 
-const inputDir = path.join("input");
-const redditphotosDir = path.join("redditphotos");
-const redditphotosPath = path.join(redditphotosDir, "redditphotos");
+const inputDir = path.join(__dirname, "input");
+const redditphotosDir = path.join(__dirname, "redditphotos");
 const imagesDir = path.join(redditphotosDir, "images");
-const scraperPath = path.join(redditphotosDir, "Scraper", "scraper.exe");
-const jsonDir = path.join("json");
+const scraperPath = path.join(redditphotosDir, "Scraper", "main");
+const jsonDir = path.join(__dirname, "json");
 
 (async function () {
    await Promise.all([fs.mkdir(inputDir), fs.mkdir(imagesDir), fs.mkdir(jsonDir)])
@@ -55,9 +51,9 @@ io.on('connection', socket => {
          .then(() => {
             fs.chmod("redditphotos/redditphotos", 0o777)
                .then(() => {
-                  exec(`cd redditphotos && ./redditphotos ${path.join("..", imgPath)}`)
+                  exec(`cd redditphotos && ./redditphotos ${path.join(imgPath)}`)
                      .then(() => {
-                        const outPath = path.join("redditphotos", "photomosaics", imgName);
+                        const outPath = path.join(imgName);
                         socket.emit('send:user', outPath);
                      })
                      .catch((error) => {
@@ -87,7 +83,7 @@ io.on('connection', socket => {
    });
 });
 
-exec(`node redditphotos/Scraper/main https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
+exec(`node ${scraperPath} https://old.reddit.com/r/EarthPorn/ 100 ${imagesDir}`)
    .catch((error) => {
       console.log(error);
    });
