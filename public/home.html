@@ -8,18 +8,21 @@
 </head>
 
 <body>
+   <!-- Header -->
    <nav>
       <div class="nav-wrapper">
          <a class="brand-logo center">Reddit Photomosaics</a>
       </div>
    </nav>
 
+   <!-- Photomosaic -->
    <div class="section">
       <div class="container">
          <img class="responsive-img" id="primary">
       </div>
    </div>
 
+   <!-- Link to CLI application -->
    <div class="container">
       <div style="text-align: center;">
          <a href="https://github.com/trevorjung02/reddit-photos-CLI/releases" target="_blank"
@@ -29,22 +32,27 @@
       </div>
    </div>
 
+   <!-- Form to submit image -->
    <div class="section">
       <div class="container">
          <form method="POST" action="" enctype="multipart/form-data" target="_blank" onchange="loadFile(event)">
             <div class="file-field input-field">
+               <!-- Upload button -->
                <div class="btn">
                   <span>Upload</span>
                   <input type="file" accept="image/*" id="userImage" name="userImage">
                </div>
+               <!-- Shows uploaded file path -->
                <div class="file-path-wrapper">
                   <input class="file-path" type="text">
                </div>
+               <!-- Shows uploaded image -->
                <div>
                   <img id="output" width="100px">
                </div>
             </div>
 
+            <!-- Submit button -->
             <button class="btn waves-effect waves-light" type="submit" name="action">
                Submit
             </button>
@@ -52,6 +60,7 @@
       </div>
    </div>
 
+   <!-- Scripts -->
    <script src="/socket.io/socket.io.js"></script>
    <script src="script.js"></script>
    <script src="getPhotomosaic.js"></script>

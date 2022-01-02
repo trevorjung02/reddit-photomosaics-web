@@ -13,23 +13,27 @@
 </head>
 
 <body>
+   <!-- Header -->
    <nav>
       <div class="nav-wrapper">
          <a class="brand-logo center">Your photomosaic is being created</a>
       </div>
    </nav>
 
+   <!-- Photomosaic -->
    <div class="section">
       <div class="container">
          <img class="responsive-img" id="primary">
       </div>
    </div>
 
+   <!-- Progress Bar -->
    <div class="section" id="progressSection">
       <div class="container">
          <div class="progress" id="progressbar">
             <div class="indeterminate"></div>
          </div>
+         <!-- Link to CLI application -->
          <div style="text-align: center;">
             <a href="https://github.com/trevorjung02/reddit-photos-CLI/releases" target="_blank"
                style="font-size: large; text-decoration: underline;">
@@ -39,30 +43,36 @@
       </div>
    </div>
 
+   <!-- Form to submit image -->
    <div class="section">
       <div class="container">
          <form method="POST" enctype="multipart/form-data" action="" accept="image/*" target="_blank"
             onchange="loadFile(event)">
             <div class="file-field input-field">
+               <!-- Upload button -->
                <div class="btn">
                   <span>Upload</span>
                   <input type="file" id="userImage" name="userImage">
                </div>
+               <!-- Shows uploaded file path -->
                <div class="file-path-wrapper">
                   <input class="file-path validate" type="text">
                </div>
+               <!-- Shows uploaded image -->
                <div>
                   <img id="output" width="100px">
                </div>
             </div>
 
-            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-
+            <!-- Submit button -->
+            <button class="btn waves-effect waves-light" type="submit" name="action">
+               Submit
             </button>
          </form>
       </div>
    </div>
 
+   <!-- Scripts -->
    <script src="/socket.io/socket.io.js"></script>
    <script src="script.js"></script>
 </body>
