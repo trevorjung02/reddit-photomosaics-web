@@ -1,6 +1,7 @@
 node_modules/
 developer/
 .vscode/
+.vs
 .env
 *.jpg
 Dockerfile
