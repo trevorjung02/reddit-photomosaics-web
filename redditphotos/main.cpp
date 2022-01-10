@@ -25,12 +25,12 @@ cv::Mat mean(cv::Mat image);
 cv::Mat createPhotomosaic(std::string in, int width, int height, int tileSize, fs::path tiles, cv::Ptr<cv::ml::KNearest> model);
 
 // Prints usage of the program on the console.
-void usage(char **argv);
+void usage(char** argv);
 
 // Checks if command line argument is the flag represented by option.
 bool isOption(std::string arg, std::string option);
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	// Set command line arguments
 	if (argc < 2)
@@ -136,7 +136,7 @@ cv::Ptr<cv::ml::KNearest> processImages(fs::path dir_in, fs::path dir_out, int w
 {
 	cv::Mat trainMat(0, 4, CV_32F);
 	cv::Mat classes(0, 1, CV_32F);
-	for (auto const &dir_entry : fs::directory_iterator{dir_in})
+	for (auto const& dir_entry : fs::directory_iterator{ dir_in })
 	{
 		fs::path fPath = dir_entry.path();
 		fs::path outName = dir_out / fPath.filename();
@@ -174,7 +174,7 @@ cv::Mat createPhotomosaic(std::string in, int width, int height, int tileSize, f
 {
 	cv::Mat image = cv::imread(in);
 	cv::Mat resized;
-	float scale = std::min(static_cast<float>(width) / image.cols, static_cast<float>(height) / image.rows);
+	double scale = std::min(static_cast<double>(width) / image.cols, static_cast<double>(height) / image.rows);
 	cv::resize(image, resized, cv::Size(), scale, scale, cv::INTER_LINEAR);
 	image = resized;
 
@@ -202,16 +202,16 @@ cv::Mat createPhotomosaic(std::string in, int width, int height, int tileSize, f
 	return image;
 }
 
-void usage(char **argv)
+void usage(char** argv)
 {
 	std::cerr << "Usage: " << argv[0] << " image_path" << '\n'
-			  << "Options:" << '\n'
-			  << "--sub=<subreddit>" << '\n'
-			  << "--n=<number of images>" << '\n'
-			  << "--tile_size=<size of tiles>" << '\n'
-			  << "--o=<name of output image>" << '\n'
-			  << "--width=<width of output image>" << '\n'
-			  << "--height=<height of output image>" << '\n';
+		<< "Options:" << '\n'
+		<< "--sub=<subreddit>" << '\n'
+		<< "--n=<number of images>" << '\n'
+		<< "--tile_size=<size of tiles>" << '\n'
+		<< "--o=<name of output image>" << '\n'
+		<< "--width=<width of output image>" << '\n'
+		<< "--height=<height of output image>" << '\n';
 }
 
 bool isOption(std::string arg, std::string option)

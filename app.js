@@ -74,12 +74,16 @@ io.on('connection', socket => {
                         socket.emit('send:user', outPath);
                      })
                      .catch((error) => {
+                        socket.emit('send:error');
                         console.log(error);
                      });
                })
                .catch((error) => {
                   console.log(error);
                })
+         })
+         .catch((error) => {
+            console.log(error);
          });
    });
 

@@ -48,4 +48,13 @@ form.addEventListener('submit', function (e) {
         let title = popup.document.querySelector("a");
         title.innerHTML = "Reddit Photomosaics";
     });
+    socket.once('send:error', function () {
+        popup.alert("Error: Could not create your photomosaic. Try inputting another image.");
+        // Remove progress bar
+        let progressBar = popup.document.getElementById("progressSection");
+        progressBar.remove();
+        // Set title to Reddit Photomosaics
+        let title = popup.document.querySelector("a");
+        title.innerHTML = "Reddit Photomosaics";
+    });
 });
